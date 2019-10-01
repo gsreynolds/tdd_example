@@ -1,0 +1,40 @@
+---
+driver:
+  name: azurerm
+  azure_resource_group_prefix: kitchen-<%= ENV['USER'] %>-
+  vm_tags:
+    X-Contact: <%= ENV['USER'] %>
+    X-Application: "Test-Kitchen"
+    X-Customer: "Test-Kitchen"
+    X-Project: "Test-Kitchen"
+    X-TTL: "4"
+
+driver_config:
+  subscription_id: <%= ENV["AZURE_SUBSCRIPTION_ID"] %>
+  location: 'North Europe'
+  machine_size: 'Standard_D2s_v3'
+
+transport:
+  ssh_key: <%= ENV["SSH_KEY"] %>
+
+provisioner:
+  name: chef_zero
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: ubuntu-18.04
+  - name: centos-7
+  - name: windows2019
+    driver:
+      image_urn: MicrosoftWindowsServer:WindowsServer:2019-Datacenter-smalldisk:latest
+    transport:
+      name: winrm
+
+suites:
+  - name: default
+    verifier:
+      inspec_tests:
+        - test/integration/default
+    attributes:
